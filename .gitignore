@@ -56,3 +56,6 @@ build/*
 
 gradle-output/*
 /bin
+
+
+war/softwareengineeringateam/*

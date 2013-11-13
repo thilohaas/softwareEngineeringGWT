@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
               http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         version="2.5"
-         xmlns="http://java.sun.com/xml/ns/javaee">
+	version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
 
-  <!-- Servlets -->
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>ch.uzh.softwareengineering.ateam.server.GreetingServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/softwareengineeringateam/greet</url-pattern>
-  </servlet-mapping>
-  
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>SoftwareengineeringATeam.html</welcome-file>
-  </welcome-file-list>
+	<!-- Servlets -->
+	<servlet>
+		<servlet-name>fileUploaderServlet</servlet-name>
+		<servlet-class>ch.uzh.softwareengineering.ateam.server.FileUpload</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileUploaderServlet</servlet-name>
+		<url-pattern>/softwareengineeringateam/fileupload</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+ 		<servlet-name>votingServiceServlet</servlet-name>
+ 		<servlet-class>ch.uzh.softwareengineering.ateam.server.VotingServiceImpl</servlet-class>
+ 	</servlet>
+	<servlet-mapping>
+ 		<servlet-name>votingServiceServlet</servlet-name>
+		 <url-pattern>/softwareengineeringateam/votingService</url-pattern>
+	 </servlet-mapping>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>SoftwareengineeringATeam.html</welcome-file>
+	</welcome-file-list>
 
 </web-app>

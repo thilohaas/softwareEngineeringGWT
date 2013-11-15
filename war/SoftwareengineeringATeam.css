@@ -32,3 +32,10 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+.appHeader {
+  text-align: center;
+  font-size: 50px;
+  font-style: oblique;
+  margin-bottom: 20px;
+}

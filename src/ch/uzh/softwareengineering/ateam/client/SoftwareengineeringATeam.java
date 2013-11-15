@@ -17,14 +17,22 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.StackPanel;
+import com.google.gwt.user.client.ui.TabBar;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -45,12 +53,37 @@ public class SoftwareengineeringATeam implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		// Create a panel to hold all of the form widgets.
-		HorizontalPanel panel = new HorizontalPanel();
-
+		
+		VerticalPanel mainpanel = new VerticalPanel();
+		mainpanel.setWidth("1024px");
+		mainpanel.setSpacing(10);
+		
+		VerticalPanel headerpanel = new VerticalPanel();
+		headerpanel.setHeight("70px");
+		headerpanel.setSpacing(25);
+		HorizontalPanel uploadpanel = new HorizontalPanel();
+		uploadpanel.setSpacing(8);
+		
+		HorizontalPanel contentpanel = new HorizontalPanel();
+		contentpanel.setWidth("650px");
+		contentpanel.setSpacing(20);
+		
+		StackPanel optionpanel = new StackPanel();
+		optionpanel.setWidth("200px");
+		
+		VerticalPanel commentpanel = new VerticalPanel();
+		commentpanel.setWidth("200px");
+		commentpanel.setHeight("400px");
+		commentpanel.setBorderWidth(2);
+		
+		Label votingHeader = new Label("Voting App");
+		votingHeader.setStyleName("appHeader");
+		
 		//create a FormPanel 
 		final FormPanel form = new FormPanel();
 		//create a file upload widget
 		final FileUpload fileUpload = new FileUpload();
+			
 		//create labels
 		Label selectLabel = new Label("Select a file:");
 		//create upload button
@@ -63,11 +96,66 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		form.setMethod(FormPanel.METHOD_POST);
 
 		//add a label
-		panel.add(selectLabel);
+		uploadpanel.add(selectLabel);
 		//add fileUpload widget
-		panel.add(fileUpload);
+		uploadpanel.add(fileUpload);
 		//add a button to upload the file
-		panel.add(uploadButton);
+		uploadpanel.add(uploadButton);
+		
+		ListBox yearList = new ListBox();
+		yearList.addItem("all");
+		yearList.addItem("2013");
+		yearList.addItem("2012");
+		yearList.addItem("2011");
+		yearList.setVisibleItemCount(4);
+		
+		ListBox votingList = new ListBox();
+		votingList.addItem("all votings");
+		votingList.addItem("SampleVoting# 00245"); //should be replaced by a for loop for each voting
+		
+		VerticalPanel zoomPanel = new VerticalPanel();
+		Label zoomLabel = new Label("Select a View:");
+		RadioButton nationalViewRB = new RadioButton("zommGroup", "National View");
+		RadioButton kantonalViewRB = new RadioButton("zommGroup", "Kantonal View");
+		nationalViewRB.setChecked(true);
+		zoomPanel.add(zoomLabel);
+		zoomPanel.add(nationalViewRB);
+		zoomPanel.add(kantonalViewRB);
+		
+		optionpanel.add(yearList, "Year:");
+		optionpanel.add(votingList, "Voting:");
+		optionpanel.add(zoomPanel, "Zoomoption:");
+		
+		final Image mapImage = new Image();
+		mapImage.setUrl("http://upload.wikimedia.org/wikipedia/commons/c/ca/BlankMap-Switzerland.png");
+		
+		FlexTable tabViewTable = new FlexTable();
+		tabViewTable.setTitle("Tabelaric View");
+		tabViewTable.setText(0, 0, "Voting name:");
+		tabViewTable.setText(0, 1, "Voting date:");
+		tabViewTable.setText(0, 2, "'Yes' votes(%):");
+		tabViewTable.setText(0, 3, "'No' votes(%):");
+		//method to fill up the table
+		
+		TabPanel tabPanel = new TabPanel();
+		tabPanel.setWidth("650px");
+		tabPanel.add(tabViewTable, "Tabelaric View");
+		tabPanel.add(mapImage, "Graphical View");
+		tabPanel.selectTab(0);
+		
+		Label commLabel = new Label("Add Comments or Images:");
+		commentpanel.add(commLabel);
+		
+		headerpanel.add(votingHeader);
+		headerpanel.add(uploadpanel);
+		
+		contentpanel.add(optionpanel);
+		contentpanel.add(tabPanel);
+		contentpanel.add(commentpanel);
+		
+		mainpanel.add(headerpanel);
+		mainpanel.add(contentpanel);
+		
 		uploadButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -92,10 +180,11 @@ public class SoftwareengineeringATeam implements EntryPoint {
 			}
 		});
 
-		// Add form to the root panel.      
-		form.add(panel);
+		// Add form to the root panel.     
+		
+		form.add(mainpanel);
 
-		RootPanel.get("navbar_right_upload").add(form);
+		RootPanel.get("voting").add(form);
 
 		final VotingServiceAsync votingService = (VotingServiceAsync) GWT.create(VotingService.class);
 		ServiceDefTarget endpoint = (ServiceDefTarget) votingService;

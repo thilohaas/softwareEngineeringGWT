@@ -53,6 +53,37 @@ public class SoftwareengineeringATeam implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		buildGUI();
+
+		final VotingServiceAsync votingService = (VotingServiceAsync) GWT.create(VotingService.class);
+		ServiceDefTarget endpoint = (ServiceDefTarget) votingService;
+		String moduleRelativeURL = GWT.getModuleBaseURL() + "votingService";
+		endpoint.setServiceEntryPoint(moduleRelativeURL);
+
+		@SuppressWarnings("rawtypes")
+		final AsyncCallback userCallback = new AsyncCallback(){
+
+			public void onFailure(Throwable caught) {
+				alert("Sorry there was an error: " + caught.getMessage());
+			}
+
+			public void onSuccess(Object result) {
+				Voting[] votings = (Voting[]) result;
+
+				// don't be tempted to use the new for loop -- GWT does not support Java 5 in client code!
+				for (int i=0;i<votings.length;i++) {
+					Voting voting = votings[i];
+				}
+
+				alert("Got " + votings.length + " votings!");
+			}
+
+		};
+
+		votingService.getVotings(userCallback);
+	}
+
+	void buildGUI() {
 		// Create a panel to hold all of the form widgets.
 		
 		VerticalPanel mainpanel = new VerticalPanel();
@@ -136,7 +167,6 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		mapImage.setUrl("http://upload.wikimedia.org/wikipedia/commons/c/ca/BlankMap-Switzerland.png");
 		
 		FlexTable tabViewTable = new FlexTable();
-		tabViewTable.setTitle("Tabelaric View");
 		tabViewTable.setText(0, 0, "Voting name:");
 		tabViewTable.setText(0, 1, "Voting date:");
 		tabViewTable.setText(0, 2, "'Yes' votes(%):");
@@ -176,6 +206,8 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		mainpanel.add(contentpanel);
 		mainpanel.add(sharepanel);
 		
+
+		
 		uploadButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -199,39 +231,11 @@ public class SoftwareengineeringATeam implements EntryPoint {
 				Window.alert(event.getResults());				
 			}
 		});
-
-		// Add form to the root panel.     
 		
+		// Add form to the root panel.     
 		form.add(mainpanel);
 
 		RootPanel.get("voting").add(form);
-
-		final VotingServiceAsync votingService = (VotingServiceAsync) GWT.create(VotingService.class);
-		ServiceDefTarget endpoint = (ServiceDefTarget) votingService;
-		String moduleRelativeURL = GWT.getModuleBaseURL() + "votingService";
-		endpoint.setServiceEntryPoint(moduleRelativeURL);
-
-		@SuppressWarnings("rawtypes")
-		final AsyncCallback userCallback = new AsyncCallback(){
-
-			public void onFailure(Throwable caught) {
-				alert("Sorry there was an error: " + caught.getMessage());
-			}
-
-			public void onSuccess(Object result) {
-				Voting[] votings = (Voting[]) result;
-
-				// don't be tempted to use the new for loop -- GWT does not support Java 5 in client code!
-				for (int i=0;i<votings.length;i++) {
-					Voting voting = votings[i];
-				}
-
-				alert("Got " + votings.length + " votings!");
-			}
-
-		};
-
-		votingService.getVotings(userCallback);
 	}
 
 	public static native void alert(String msg) /*-{

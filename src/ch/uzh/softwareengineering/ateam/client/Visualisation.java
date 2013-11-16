@@ -40,6 +40,12 @@ public class Visualisation {
 		table.setText(0, 3, "No-Votes(%)");
 		
 		//Fill it with the data
+		fillTable(table);
+		
+		return table;
+	}
+
+	void fillTable(FlexTable table) {
 		for(int i = 1; (i -1) < data.getSize(); i++){
 			int date = data.getVoting(i -1).getDate().getYear();
 			String year = String.valueOf(date);
@@ -50,8 +56,6 @@ public class Visualisation {
 			String noVotes = String.valueOf(data.getVoting(i -1).getNoVotes());
 			table.setText(i, 3, noVotes);
 		}
-		
-		return table;
 	}
 
 	

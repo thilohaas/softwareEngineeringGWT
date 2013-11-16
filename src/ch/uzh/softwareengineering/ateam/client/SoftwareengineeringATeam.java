@@ -62,10 +62,12 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		headerpanel.setHeight("70px");
 		headerpanel.setSpacing(25);
 		HorizontalPanel uploadpanel = new HorizontalPanel();
+		
 		uploadpanel.setSpacing(8);
 		
 		HorizontalPanel contentpanel = new HorizontalPanel();
 		contentpanel.setWidth("650px");
+		contentpanel.setHeight("600px");
 		contentpanel.setSpacing(20);
 		
 		StackPanel optionpanel = new StackPanel();
@@ -78,6 +80,9 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		
 		Label votingHeader = new Label("Voting App");
 		votingHeader.setStyleName("appHeader");
+		
+		HorizontalPanel sharepanel = new HorizontalPanel();
+		sharepanel.setWidth("1024px");
 		
 		//create a FormPanel 
 		final FormPanel form = new FormPanel();
@@ -144,7 +149,15 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		tabPanel.selectTab(0);
 		
 		Label commLabel = new Label("Add Comments or Images:");
+		VerticalPanel commButtonsPanel = new VerticalPanel();
+		Button addComment = new Button("Add comment");
+		Button addImage = new Button("Add image");
+		Button deleteComment = new Button("Delete selected");
+		commButtonsPanel.add(addComment);
+		commButtonsPanel.add(addImage);
+		commButtonsPanel.add(deleteComment);
 		commentpanel.add(commLabel);
+		commentpanel.add(commButtonsPanel);
 		
 		headerpanel.add(votingHeader);
 		headerpanel.add(uploadpanel);
@@ -153,8 +166,14 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		contentpanel.add(tabPanel);
 		contentpanel.add(commentpanel);
 		
+		Button shareViz = new Button("Share vizualisation");
+		Button saveViz = new Button("Download vizualisation");
+		sharepanel.add(saveViz);
+		sharepanel.add(shareViz);
+		
 		mainpanel.add(headerpanel);
 		mainpanel.add(contentpanel);
+		mainpanel.add(sharepanel);
 		
 		uploadButton.addClickHandler(new ClickHandler() {
 			@Override

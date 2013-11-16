@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
@@ -81,7 +82,7 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		Label votingHeader = new Label("Voting App");
 		votingHeader.setStyleName("appHeader");
 		
-		HorizontalPanel sharepanel = new HorizontalPanel();
+		FlowPanel sharepanel = new FlowPanel();
 		sharepanel.setWidth("1024px");
 		
 		//create a FormPanel 

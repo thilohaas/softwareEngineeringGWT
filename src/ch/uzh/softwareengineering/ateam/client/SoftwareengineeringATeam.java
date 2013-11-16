@@ -1,5 +1,7 @@
 package ch.uzh.softwareengineering.ateam.client;
 
+import java.util.Date;
+
 import ch.uzh.softwareengineering.ateam.shared.FieldVerifier;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -135,6 +137,24 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		final Image mapImage = new Image();
 		mapImage.setUrl("http://upload.wikimedia.org/wikipedia/commons/c/ca/BlankMap-Switzerland.png");
 		
+		//Sample Voting
+		Voting example = new Voting();
+		example.setId(0);
+		Date date = new Date();
+		date.setYear(2013);
+		example.setDate(date);
+		example.setTitle("Abzockerinitiative");
+		example.setYesVotes(68.0);
+		example.setNoVotes(32.0);
+		
+		Data data = new Data();
+		data.addVoting(example);
+		
+		Visualisation visual = new Visualisation();
+		visual.setData(data);
+		FlexTable tabViewTable = visual.visualize();
+		
+		/*
 		FlexTable tabViewTable = new FlexTable();
 		tabViewTable.setTitle("Tabelaric View");
 		tabViewTable.setText(0, 0, "Voting name:");
@@ -142,7 +162,7 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		tabViewTable.setText(0, 2, "'Yes' votes(%):");
 		tabViewTable.setText(0, 3, "'No' votes(%):");
 		//method to fill up the table
-		
+		*/
 		TabPanel tabPanel = new TabPanel();
 		tabPanel.setWidth("650px");
 		tabPanel.add(tabViewTable, "Tabelaric View");

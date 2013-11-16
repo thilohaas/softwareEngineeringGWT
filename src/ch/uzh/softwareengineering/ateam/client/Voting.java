@@ -9,8 +9,8 @@ public class Voting implements IsSerializable {
 	private String title;
 	private Date date;
 	private String type;
-	private int yesVotes = 0;
-	private int noVotes = 0;
+	private double yesVotes = 0;
+	private double noVotes = 0;
 	private double participation = 0;
 	
 	public Voting() {
@@ -75,28 +75,28 @@ public class Voting implements IsSerializable {
 	/**
 	 * @return the yesVotes
 	 */
-	public int getYesVotes() {
+	public double getYesVotes() {
 		return yesVotes;
 	}
 
 	/**
 	 * @param yesVotes the yesVotes to set
 	 */
-	public void setYesVotes(int yesVotes) {
+	public void setYesVotes(double yesVotes) {
 		this.yesVotes = yesVotes;
 	}
 
 	/**
 	 * @return the noVotes
 	 */
-	public int getNoVotes() {
+	public double getNoVotes() {
 		return noVotes;
 	}
 
 	/**
 	 * @param noVotes the noVotes to set
 	 */
-	public void setNoVotes(int noVotes) {
+	public void setNoVotes(double noVotes) {
 		this.noVotes = noVotes;
 	}
 

@@ -1,15 +1,37 @@
 package ch.uzh.softwareengineering.ateam.client;
 
-public class Data {
+import java.util.ArrayList;
+
+public class Data implements VotingService{
 	
-	private Voting[] dataset;
+	private ArrayList<Voting> dataset;
+	private int size;
 	
-	public Voting[] getData(/*Filter filer*/){
-		Voting[] voting = new Voting[10];    //Random operation. 
-		return voting;
-	}	
-	
-	public Voting[] getDataSet(){
+	public Data(){
+		dataset = new ArrayList();
+	}
+		
+	@Override
+	public Voting getVoting(int id) {
+		// TODO Auto-generated method stub
+		return dataset.get(id);
+	}
+
+	@Override
+	public ArrayList<Voting> getVotings() {
+		// TODO Auto-generated method stub
 		return dataset;
 	}
+
+	@Override
+	public Voting addVoting(Voting voting) {
+		dataset.add(voting);
+		size++;
+		return null;
+	}
+	
+	public int getSize(){
+		return size;
+	}
+	
 }

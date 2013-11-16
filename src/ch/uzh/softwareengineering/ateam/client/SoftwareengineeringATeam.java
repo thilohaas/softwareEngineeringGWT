@@ -117,7 +117,7 @@ public class SoftwareengineeringATeam implements EntryPoint {
 		
 		ListBox votingList = new ListBox();
 		votingList.addItem("all votings");
-		votingList.addItem("SampleVoting# 00245"); //should be replaced by a for loop for each voting
+		votingList.addItem("SampleVoting# 00245"); //should be replaced by a method or a for loop for each voting
 		
 		VerticalPanel zoomPanel = new VerticalPanel();
 		Label zoomLabel = new Label("Select a View:");

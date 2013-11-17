@@ -26,34 +26,34 @@ public class VotingGUI {
 	void buildGUI() {
 		// Create a panel to hold all of the form widgets.
 		
-		VerticalPanel mainpanel = new VerticalPanel();
+		final VerticalPanel mainpanel = new VerticalPanel();
 		mainpanel.setWidth("1024px");
 		mainpanel.setSpacing(10);
 		
-		VerticalPanel headerpanel = new VerticalPanel();
+		final VerticalPanel headerpanel = new VerticalPanel();
 		headerpanel.setHeight("70px");
 		headerpanel.setSpacing(25);
-		HorizontalPanel uploadpanel = new HorizontalPanel();
+		final HorizontalPanel uploadpanel = new HorizontalPanel();
 		
 		uploadpanel.setSpacing(8);
 		
-		HorizontalPanel contentpanel = new HorizontalPanel();
+		final HorizontalPanel contentpanel = new HorizontalPanel();
 		contentpanel.setWidth("650px");
 		contentpanel.setHeight("600px");
 		contentpanel.setSpacing(20);
 		
-		StackPanel optionpanel = new StackPanel();
+		final StackPanel optionpanel = new StackPanel();
 		optionpanel.setWidth("200px");
 		
-		VerticalPanel commentpanel = new VerticalPanel();
+		final VerticalPanel commentpanel = new VerticalPanel();
 		commentpanel.setWidth("200px");
 		commentpanel.setHeight("400px");
 		commentpanel.setBorderWidth(2);
 		
-		Label votingHeader = new Label("Voting App");
+		final Label votingHeader = new Label("Vote Result App");
 		votingHeader.setStyleName("appHeader");
 		
-		FlowPanel sharepanel = new FlowPanel();
+		final FlowPanel sharepanel = new FlowPanel();
 		sharepanel.setWidth("1024px");
 		
 		//create a FormPanel 
@@ -62,9 +62,9 @@ public class VotingGUI {
 		final FileUpload fileUpload = new FileUpload();
 			
 		//create labels
-		Label selectLabel = new Label("Select a file:");
+		final Label selectLabel = new Label("Select a file:");
 		//create upload button
-		Button uploadButton = new Button("Upload File");
+		final Button uploadButton = new Button("Upload File");
 		//pass action to the form to point to service handling file 
 		//receiving operation.
 		form.setAction(GWT.getModuleBaseURL()+"fileupload");
@@ -79,21 +79,21 @@ public class VotingGUI {
 		//add a button to upload the file
 		uploadpanel.add(uploadButton);
 		
-		ListBox yearList = new ListBox();
+		final ListBox yearList = new ListBox();
 		yearList.addItem("all");
 		yearList.addItem("2013");
 		yearList.addItem("2012");
 		yearList.addItem("2011");
 		yearList.setVisibleItemCount(4);
 		
-		ListBox votingList = new ListBox();
+		final ListBox votingList = new ListBox();
 		votingList.addItem("all votings");
-		votingList.addItem("SampleVoting# 00245"); //should be replaced by a method or a for loop for each voting
+		votingList.addItem("Abzockerinitiative"); //should be replaced by a method or a for loop for each voting
 		
-		VerticalPanel zoomPanel = new VerticalPanel();
-		Label zoomLabel = new Label("Select a View:");
-		RadioButton nationalViewRB = new RadioButton("zommGroup", "National View");
-		RadioButton kantonalViewRB = new RadioButton("zommGroup", "Kantonal View");
+		final VerticalPanel zoomPanel = new VerticalPanel();
+		final Label zoomLabel = new Label("Select a View:");
+		final RadioButton nationalViewRB = new RadioButton("zommGroup", "National View");
+		final RadioButton kantonalViewRB = new RadioButton("zommGroup", "Kantonal View");
 		nationalViewRB.setChecked(true);
 		zoomPanel.add(zoomLabel);
 		zoomPanel.add(nationalViewRB);
@@ -107,7 +107,7 @@ public class VotingGUI {
 		mapImage.setUrl("http://upload.wikimedia.org/wikipedia/commons/c/ca/BlankMap-Switzerland.png");
 		
 		//Sample Voting
-		Voting example = new Voting();
+		final Voting example = new Voting();
 		example.setId(0);
 		Date date = new Date();
 		date.setYear(2013);
@@ -116,25 +116,25 @@ public class VotingGUI {
 		example.setYesVotes(68.0);
 		example.setNoVotes(32.0);
 		
-		Data data = new Data();
+		final Data data = new Data();
 		data.addVoting(example);
 		
-		Visualisation visual = new Visualisation();
+		final Visualisation visual = new Visualisation();
 		visual.setData(data);
-		FlexTable tabViewTable = visual.visualize();
+		final FlexTable tabViewTable = visual.visualize();
 		
 
-		TabPanel tabPanel = new TabPanel();
+		final TabPanel tabPanel = new TabPanel();
 		tabPanel.setWidth("650px");
-		tabPanel.add(tabViewTable, "Tabelaric View");
+		tabPanel.add(tabViewTable, "Tabular View");
 		tabPanel.add(mapImage, "Graphical View");
 		tabPanel.selectTab(0);
 		
-		Label commLabel = new Label("Add Comments or Images:");
-		VerticalPanel commButtonsPanel = new VerticalPanel();
-		Button addComment = new Button("Add comment");
-		Button addImage = new Button("Add image");
-		Button deleteComment = new Button("Delete selected");
+		final Label commLabel = new Label("Add Comments or Images:");
+		final VerticalPanel commButtonsPanel = new VerticalPanel();
+		final Button addComment = new Button("Add comment");
+		final Button addImage = new Button("Add image");
+		final Button deleteComment = new Button("Delete selected");
 		commButtonsPanel.add(addComment);
 		commButtonsPanel.add(addImage);
 		commButtonsPanel.add(deleteComment);
@@ -148,8 +148,8 @@ public class VotingGUI {
 		contentpanel.add(tabPanel);
 		contentpanel.add(commentpanel);
 		
-		Button shareViz = new Button("Share vizualisation");
-		Button saveViz = new Button("Download vizualisation");
+		final Button shareViz = new Button("Share visualisation");
+		final Button saveViz = new Button("Download visualisation");
 		sharepanel.add(saveViz);
 		sharepanel.add(shareViz);
 		

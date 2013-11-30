@@ -86,9 +86,9 @@ public class VotingGUI {
 		yearList.addItem("2011");
 		yearList.setVisibleItemCount(4);
 		
-		final ListBox votingList = new ListBox();
+		final ListBox votingList = new ListBox(true);
 		votingList.addItem("all votings");
-		votingList.addItem("Abzockerinitiative"); //should be replaced by a method or a for loop for each voting
+		votingList.setVisibleItemCount(10);
 		
 		final VerticalPanel zoomPanel = new VerticalPanel();
 		final Label zoomLabel = new Label("Select a View:");
@@ -105,6 +105,8 @@ public class VotingGUI {
 		
 		final Image mapImage = new Image();
 		mapImage.setUrl("http://upload.wikimedia.org/wikipedia/commons/c/ca/BlankMap-Switzerland.png");
+		mapImage.setWidth("650px");
+		mapImage.setHeight("412px");
 		
 		//Sample Voting
 		final Voting example = new Voting();
@@ -123,6 +125,12 @@ public class VotingGUI {
 		visual.setData(data);
 		final FlexTable tabViewTable = visual.visualize();
 		
+		//add all votings to dropdown list
+		int numOfVotings = data.getSize();
+		for (int i = 0; i < numOfVotings; i++){
+			String currentVoteName = data.getVoting(i).getTitle();
+			votingList.addItem(currentVoteName);
+		}
 
 		final TabPanel tabPanel = new TabPanel();
 		tabPanel.setWidth("650px");
@@ -188,4 +196,9 @@ public class VotingGUI {
 
 		RootPanel.get("voting").add(form);
 	}
+	//method is called after every change in the option panel to update the view
+	void updateGUI(){
+		
+	}
+	
 }

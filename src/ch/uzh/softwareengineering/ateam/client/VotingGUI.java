@@ -228,7 +228,8 @@ public class VotingGUI {
 	
 	//method is called after every change in the option panel to update the view
 	void updateGUI(){
-		Data filteredData = new Data();
+		Data yearFilteredData = new Data();
+		Data selectFilteredData = new Data();
 		int selctedYearIndex = yearList.getSelectedIndex();
 		int selectedYear = 0;
 		int numOFVotes = data.getSize();
@@ -238,17 +239,27 @@ public class VotingGUI {
 			//filtering for year
 			for(int i = 0; i < numOFVotes; i++){
 				if(selectedYear == data.getVoting(i).getDate().getYear()){
-					filteredData.addVoting(data.getVoting(i));
+					yearFilteredData.addVoting(data.getVoting(i));
 				}
 			}
 		}
 		else{
 			for(int i = 0; i < numOFVotes; i++){
-					filteredData.addVoting(data.getVoting(i));
+				yearFilteredData.addVoting(data.getVoting(i));
 			}
 		}
+		
+		//refresh voting dropdownlist
+		votingList.clear();
+		votingList.addItem("all votings");
+		int numOfVotings = yearFilteredData.getSize();
+		for (int i = 0; i < numOfVotings; i++){
+			String currentVoteName = yearFilteredData.getVoting(i).getTitle();
+			votingList.addItem(currentVoteName);
+		}
 					
-		updateTable(tabViewTable, filteredData);
+		updateTable(tabViewTable, yearFilteredData);
+		
 	}
 	
 	void updateTable(FlexTable table, Data currData) {

@@ -3,6 +3,8 @@ package ch.uzh.softwareengineering.ateam.client;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -23,6 +25,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 
 public class VotingGUI {
+	final Visualisation visual = new Visualisation();
+	FlexTable tabViewTable = new FlexTable();
+	final Data data = new Data();
+	
+	final ListBox yearList = new ListBox();
+	final ListBox votingList = new ListBox(true);
+	
 	void buildGUI() {
 		// Create a panel to hold all of the form widgets.
 		
@@ -79,14 +88,14 @@ public class VotingGUI {
 		//add a button to upload the file
 		uploadpanel.add(uploadButton);
 		
-		final ListBox yearList = new ListBox();
+		
 		yearList.addItem("all");
 		yearList.addItem("2013");
 		yearList.addItem("2012");
 		yearList.addItem("2011");
 		yearList.setVisibleItemCount(4);
 		
-		final ListBox votingList = new ListBox(true);
+
 		votingList.addItem("all votings");
 		votingList.setVisibleItemCount(10);
 		
@@ -118,12 +127,24 @@ public class VotingGUI {
 		example.setYesVotes(68.0);
 		example.setNoVotes(32.0);
 		
-		final Data data = new Data();
-		data.addVoting(example);
+		//Sample Voting
+		final Voting example2 = new Voting();
+		example2.setId(1);
+		Date date2 = new Date();
+		date2.setYear(2012);
+		example2.setDate(date2);
+		example2.setTitle("6 Wochen Ferien");
+		example2.setYesVotes(33.5);
+		example2.setNoVotes(45.5);
 		
-		final Visualisation visual = new Visualisation();
+		
+		
+		data.addVoting(example);
+		data.addVoting(example2);
+		
+		
 		visual.setData(data);
-		final FlexTable tabViewTable = visual.visualize();
+		tabViewTable = visual.visualize();
 		
 		//add all votings to dropdown list
 		int numOfVotings = data.getSize();
@@ -165,7 +186,15 @@ public class VotingGUI {
 		mainpanel.add(contentpanel);
 		mainpanel.add(sharepanel);
 		
+		
+		yearList.addChangeHandler(new ChangeHandler()
+		{
+			@Override
+			public void onChange(ChangeEvent event) {
+				updateGUI();
+			}
 
+		});
 		
 		uploadButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -196,8 +225,48 @@ public class VotingGUI {
 
 		RootPanel.get("voting").add(form);
 	}
+	
 	//method is called after every change in the option panel to update the view
 	void updateGUI(){
+		Data filteredData = new Data();
+		int selctedYearIndex = yearList.getSelectedIndex();
+		int selectedYear = 0;
+		int numOFVotes = data.getSize();
+		
+		if(selctedYearIndex != 0){
+			selectedYear = Integer.parseInt(yearList.getItemText(selctedYearIndex));
+			//filtering for year
+			for(int i = 0; i < numOFVotes; i++){
+				if(selectedYear == data.getVoting(i).getDate().getYear()){
+					filteredData.addVoting(data.getVoting(i));
+				}
+			}
+		}
+		else{
+			for(int i = 0; i < numOFVotes; i++){
+					filteredData.addVoting(data.getVoting(i));
+			}
+		}
+					
+		updateTable(tabViewTable, filteredData);
+	}
+	
+	void updateTable(FlexTable table, Data currData) {
+		table.removeAllRows();
+		table.setText(0, 0, "Year");
+		table.setText(0, 1, "Name");
+		table.setText(0, 2, "Yes-Votes(%)");
+		table.setText(0, 3, "No-Votes(%)");
+		for(int i = 1 ; i <= currData.getSize(); i++){
+			int date = currData.getVoting(i-1).getDate().getYear();
+			String year = String.valueOf(date);
+			table.setText(i, 0, year);
+			table.setText(i, 1, currData.getVoting(i -1).getTitle());
+			String yesVotes = String.valueOf(currData.getVoting(i -1).getYesVotes());
+			table.setText(i, 2, yesVotes);
+			String noVotes = String.valueOf(currData.getVoting(i -1).getNoVotes());
+			table.setText(i, 3, noVotes);
+		}
 		
 	}
 	

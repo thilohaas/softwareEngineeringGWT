@@ -120,9 +120,7 @@ public class VotingGUI {
 		//Sample Voting
 		final Voting example = new Voting();
 		example.setId(0);
-		Date date = new Date();
-		date.setYear(2013);
-		example.setDate(date);
+		example.setYear(2013);
 		example.setTitle("Abzockerinitiative");
 		example.setYesVotes(68.0);
 		example.setNoVotes(32.0);
@@ -130,17 +128,23 @@ public class VotingGUI {
 		//Sample Voting
 		final Voting example2 = new Voting();
 		example2.setId(1);
-		Date date2 = new Date();
-		date2.setYear(2012);
-		example2.setDate(date2);
+		example2.setYear(2012);
 		example2.setTitle("6 Wochen Ferien");
 		example2.setYesVotes(33.5);
 		example2.setNoVotes(45.5);
 		
+		//Sample Voting
+		final Voting example3 = new Voting();
+		example3.setId(3);
+		example3.setYear(2013);
+		example3.setTitle("Familieninitiative");
+		example3.setYesVotes(41.5);
+		example3.setNoVotes(58.5);
 		
 		
 		data.addVoting(example);
 		data.addVoting(example2);
+		data.addVoting(example3); 
 		
 		
 		visual.setData(data);
@@ -238,7 +242,7 @@ public class VotingGUI {
 			selectedYear = Integer.parseInt(yearList.getItemText(selctedYearIndex));
 			//filtering for year
 			for(int i = 0; i < numOFVotes; i++){
-				if(selectedYear == data.getVoting(i).getDate().getYear()){
+				if(selectedYear == data.getVoting(i).getYear()){
 					yearFilteredData.addVoting(data.getVoting(i));
 				}
 			}
@@ -269,7 +273,7 @@ public class VotingGUI {
 		table.setText(0, 2, "Yes-Votes(%)");
 		table.setText(0, 3, "No-Votes(%)");
 		for(int i = 1 ; i <= currData.getSize(); i++){
-			int date = currData.getVoting(i-1).getDate().getYear();
+			int date = currData.getVoting(i-1).getYear();
 			String year = String.valueOf(date);
 			table.setText(i, 0, year);
 			table.setText(i, 1, currData.getVoting(i -1).getTitle());

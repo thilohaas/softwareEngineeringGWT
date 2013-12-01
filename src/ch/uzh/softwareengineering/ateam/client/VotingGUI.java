@@ -198,6 +198,8 @@ public class VotingGUI {
 		{
 			@Override
 			public void onChange(ChangeEvent event) {
+
+				votingList.setSelectedIndex(0);
 				updateGUI();
 			}
 

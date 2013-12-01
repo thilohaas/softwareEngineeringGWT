@@ -92,8 +92,8 @@ public class VotingGUI {
 		yearList.addItem("all");
 		yearList.addItem("2013");
 		yearList.addItem("2012");
-		yearList.addItem("2011");
-		yearList.setVisibleItemCount(4);
+		//yearList.addItem("2011");
+		yearList.setVisibleItemCount(3);
 		
 
 		votingList.addItem("all votings");
@@ -186,8 +186,20 @@ public class VotingGUI {
 		mainpanel.add(contentpanel);
 		mainpanel.add(sharepanel);
 		
+
+		votingList.setItemSelected(0, true);
+		
 		
 		yearList.addChangeHandler(new ChangeHandler()
+		{
+			@Override
+			public void onChange(ChangeEvent event) {
+				updateGUI();
+			}
+
+		});
+		
+		votingList.addChangeHandler(new ChangeHandler()
 		{
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -230,6 +242,7 @@ public class VotingGUI {
 	void updateGUI(){
 		Data yearFilteredData = new Data();
 		Data selectFilteredData = new Data();
+		Data filteredData = new Data();
 		int selctedYearIndex = yearList.getSelectedIndex();
 		int selectedYear = 0;
 		int numOFVotes = data.getSize();
@@ -238,27 +251,60 @@ public class VotingGUI {
 			selectedYear = Integer.parseInt(yearList.getItemText(selctedYearIndex));
 			//filtering for year
 			for(int i = 0; i < numOFVotes; i++){
-				if(selectedYear == data.getVoting(i).getDate().getYear()){
-					yearFilteredData.addVoting(data.getVoting(i));
+				if(selectedYear == data.getVotings().get(i).getDate().getYear()){
+					yearFilteredData.addVoting(data.getVotings().get(i));
 				}
 			}
 		}
 		else{
 			for(int i = 0; i < numOFVotes; i++){
-				yearFilteredData.addVoting(data.getVoting(i));
+				yearFilteredData.addVoting(data.getVotings().get(i));
 			}
 		}
+		filteredData.copyData(yearFilteredData);
 		
+		
+		boolean[] selectedArray = new boolean[votingList.getItemCount()];
+		//checking which votings are selected
+		for(int i = 0; i < votingList.getItemCount(); i++){
+			if(votingList.isItemSelected(i)){
+				selectedArray[i] = true;
+			}
+			else{
+				selectedArray[i] = false;
+			}
+		}
 		//refresh voting dropdownlist
+		int itemInListCount = votingList.getItemCount();
 		votingList.clear();
 		votingList.addItem("all votings");
-		int numOfVotings = yearFilteredData.getSize();
-		for (int i = 0; i < numOfVotings; i++){
+		for (int i = 0; i < yearFilteredData.getSize(); i++){
 			String currentVoteName = yearFilteredData.getVoting(i).getTitle();
 			votingList.addItem(currentVoteName);
 		}
-					
-		updateTable(tabViewTable, yearFilteredData);
+		for(int j = 0; j < itemInListCount; j++){
+			if(selectedArray[j] == true){
+				votingList.setItemSelected(j, true);
+			}
+		}
+		
+		//filter selected votes
+		
+		if(selectedArray[0] == false){
+			for(int i = 1; i <= yearFilteredData.getSize(); i++){
+				if(selectedArray[i] == true){
+					selectFilteredData.addVoting(yearFilteredData.getVotings().get(i-1));
+				}
+			}
+		}
+		else{
+			selectFilteredData.copyData(yearFilteredData);
+		}
+		filteredData.copyData(selectFilteredData);
+		
+		
+		//actually updating the table view
+		updateTable(tabViewTable, filteredData);
 		
 	}
 	

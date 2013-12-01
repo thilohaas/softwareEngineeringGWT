@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Data implements VotingService{
 	
 	private ArrayList<Voting> dataset;
-	private int size;
+	private int size = 0;
 	
 	public Data(){
 		dataset = new ArrayList();
@@ -34,4 +34,12 @@ public class Data implements VotingService{
 		return size;
 	}
 	
+	public void copyData(Data newData){
+		dataset.clear();
+		for(int i = 0; i < newData.getSize(); i++){
+			dataset.add(newData.getVotings().get(i));
+		}
+		size = dataset.size();
+		
+	}
 }

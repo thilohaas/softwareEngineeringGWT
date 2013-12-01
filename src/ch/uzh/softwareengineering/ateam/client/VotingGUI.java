@@ -191,7 +191,7 @@ public class VotingGUI {
 			}
 		});
 		
-		// Add form to the root panel.     
+		// Add form to the root panel     
 		form.add(mainpanel);
 
 		RootPanel.get("voting").add(form);

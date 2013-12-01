@@ -19,7 +19,6 @@ public class Visualisation {
 	}
 	
 	public Data getData(/*Filter filter*/){
-		Data data = new Data();    //Random operation
 		return data;
 	}
 	
@@ -47,7 +46,7 @@ public class Visualisation {
 
 	void fillTable(FlexTable table) {
 		for(int i = 1; (i -1) < data.getSize(); i++){
-			int date = data.getVoting(i -1).getDate().getYear();
+			int date = data.getVoting(i -1).getYear();
 			String year = String.valueOf(date);
 			table.setText(i, 0, year);
 			table.setText(i, 1, data.getVoting(i -1).getTitle());
@@ -57,10 +56,4 @@ public class Visualisation {
 			table.setText(i, 3, noVotes);
 		}
 	}
-
-	
-	
-	
-	
-	
 }

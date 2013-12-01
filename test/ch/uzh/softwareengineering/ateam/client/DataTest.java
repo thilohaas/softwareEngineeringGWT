@@ -21,8 +21,5 @@ public class DataTest {
 		
 		assertEquals(3, data.getSize());
 		assertTrue(data.getVoting(1).getTitle().equals("Abzockerinitiative"));
-		
-		
 	}
-
 }

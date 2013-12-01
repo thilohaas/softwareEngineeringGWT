@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class Voting implements IsSerializable {
 	private int id;
 	private String title;
-	private Date date;
+	private int year;
 	private String type;
 	private double yesVotes = 0;
 	private double noVotes = 0;
@@ -47,15 +47,15 @@ public class Voting implements IsSerializable {
 	/**
 	 * @return the date
 	 */
-	public Date getDate() {
-		return date;
+	public int getYear() {
+		return year;
 	}
 
 	/**
 	 * @param date the date to set
 	 */
-	public void setDate(Date date) {
-		this.date = date;
+	public void setYear(int year) {
+		this.year = year;
 	}
 
 	/**

@@ -1,13 +1,10 @@
 package ch.uzh.softwareengineering.ateam.server;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Iterator;
 
@@ -23,16 +20,16 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import ch.uzh.softwareengineering.ateam.client.Voting;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.gwt.user.client.rpc.InvocationException;
 
 public class FileUpload extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-
-	private static final String INSERT_VOTING = "insert into votings (id, title, year, yesVotes, noVotes) VALUES (null, ?, ?, ?, ?)";
-	private static final String DELETE_VOTINGS = "TRUNCATE TABLE votings";
-
-	private Connection connection;
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -57,7 +54,7 @@ public class FileUpload extends HttpServlet {
 
 		try {
 			// Create a factory for disk-based file items
-			FileItemFactory factory = new DiskFileItemFactory();
+			FileItemFactory factory = new DiskFileItemFactory(10240, new File(""));
 			// Create a new file upload handler
 			ServletFileUpload upload = new ServletFileUpload(factory);
 
@@ -136,61 +133,36 @@ public class FileUpload extends HttpServlet {
 			
 			System.out.println("Successfully finnished data upload!");
 
-			if(!this.connection.isClosed()) {
-				this.connection.close();
-			}
-
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private void removeAllEntriesFromDatabase() throws Exception {
-		Connection conn = this.getConnection();
-		PreparedStatement ps = conn.prepareStatement(DELETE_VOTINGS);
-		ps.execute();
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		// Use class Query to assemble a query
+		Query q = new Query("voting");
+
+		// Use PreparedQuery interface to retrieve results
+		PreparedQuery pq = datastore.prepare(q);
+
+		for (Entity result : pq.asIterable()) {
+			datastore.delete(result.getKey());
+		}
 	}
 
 	public void addVoting(Voting voting) {
 		try {
-			Connection conn = this.getConnection();
-
-			PreparedStatement ps = conn.prepareStatement(INSERT_VOTING);
-			ps.setString(1, voting.getTitle());
-			ps.setInt(2, voting.getYear());
-			ps.setDouble(3, voting.getYesVotes());
-			ps.setDouble(4, voting.getNoVotes());
-
-			ps.executeUpdate();
-
-		} catch (SQLException e) {
-			throw new InvocationException("Exeption saving stocks", e);
+			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+			Entity vote = new Entity("voting");
+			vote.setProperty("title", voting.getTitle());
+			vote.setProperty("year", voting.getYear());
+			vote.setProperty("yes", voting.getYesVotes());
+			vote.setProperty("no", voting.getNoVotes());
+			datastore.put(vote);
 		} catch (Exception e) {
 			throw new InvocationException(
 					"Exeption connecting to the database", e);
 		}
-	}
-
-	private Connection getConnection() throws Exception {
-		if(null != this.connection && !this.connection.isClosed()) {
-			return this.connection;
-		}
-
-		try {
-			String host = "jdbc:mysql://tori.smartive.ch/";
-			String db = "thilo_softwareengineering";
-			String driver = "com.mysql.jdbc.Driver";
-			String user = "thilo_se";
-			String pass = "thilo_se$";
-
-			Class.forName(driver).newInstance();
-			this.connection = DriverManager
-					.getConnection(host + db, user, pass);
-
-		} catch (Exception e) {
-			throw e;
-		}
-
-		return this.connection;
 	}
 }

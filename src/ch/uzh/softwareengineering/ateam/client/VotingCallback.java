@@ -26,7 +26,6 @@ public class VotingCallback implements AsyncCallback {
 //			Voting voting = votings[i];
 //		}
 
-		alert("Got " + votings.size() + " votings!");
 		this.appGUI.buildGUI(votings);
 		this.appGUI.updateGUI();
 	}

@@ -1,6 +1,9 @@
 package ch.uzh.softwareengineering.ateam.client;
 
+import java.util.ArrayList;
 import java.util.Date;
+
+import org.apache.commons.collections.ListUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -27,12 +30,14 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 public class VotingGUI {
 	final Visualisation visual = new Visualisation();
 	FlexTable tabViewTable = new FlexTable();
-	final Data data = new Data();
+	Data data;
 	
 	final ListBox yearList = new ListBox();
 	final ListBox votingList = new ListBox(true);
 	
-	void buildGUI() {
+	void buildGUI(ArrayList<Voting> dataset) {
+		System.out.println("buildGUI got dataset #" + dataset.size());
+		data = new Data(dataset);
 		// Create a panel to hold all of the form widgets.
 		
 		final VerticalPanel mainpanel = new VerticalPanel();
@@ -42,9 +47,10 @@ public class VotingGUI {
 		final VerticalPanel headerpanel = new VerticalPanel();
 		headerpanel.setHeight("70px");
 		headerpanel.setSpacing(25);
-		final HorizontalPanel uploadpanel = new HorizontalPanel();
 		
+		final HorizontalPanel uploadpanel = new HorizontalPanel();
 		uploadpanel.setSpacing(8);
+		uploadpanel.addStyleName("uploadPanel");
 		
 		final HorizontalPanel contentpanel = new HorizontalPanel();
 		contentpanel.setWidth("650px");
@@ -64,29 +70,6 @@ public class VotingGUI {
 		
 		final FlowPanel sharepanel = new FlowPanel();
 		sharepanel.setWidth("1024px");
-		
-		//create a FormPanel 
-		final FormPanel form = new FormPanel();
-		//create a file upload widget
-		final FileUpload fileUpload = new FileUpload();
-			
-		//create labels
-		final Label selectLabel = new Label("Select a file:");
-		//create upload button
-		final Button uploadButton = new Button("Upload File");
-		//pass action to the form to point to service handling file 
-		//receiving operation.
-		form.setAction(GWT.getModuleBaseURL()+"fileupload");
-		// set form to use the POST method, and multipart MIME encoding.
-		form.setEncoding(FormPanel.ENCODING_MULTIPART);
-		form.setMethod(FormPanel.METHOD_POST);
-
-		//add a label
-		uploadpanel.add(selectLabel);
-		//add fileUpload widget
-		uploadpanel.add(fileUpload);
-		//add a button to upload the file
-		uploadpanel.add(uploadButton);
 		
 		
 		yearList.addItem("all");
@@ -117,35 +100,6 @@ public class VotingGUI {
 		mapImage.setWidth("650px");
 		mapImage.setHeight("412px");
 		
-		//Sample Voting
-		final Voting example = new Voting();
-		example.setId(0);
-		example.setYear(2013);
-		example.setTitle("Abzockerinitiative");
-		example.setYesVotes(68.0);
-		example.setNoVotes(32.0);
-		
-		//Sample Voting
-		final Voting example2 = new Voting();
-		example2.setId(1);
-		example2.setYear(2012);
-		example2.setTitle("6 Wochen Ferien");
-		example2.setYesVotes(33.5);
-		example2.setNoVotes(45.5);
-		
-		//Sample Voting
-		final Voting example3 = new Voting();
-		example3.setId(3);
-		example3.setYear(2013);
-		example3.setTitle("Familieninitiative");
-		example3.setYesVotes(41.5);
-		example3.setNoVotes(58.5);
-		
-		
-		data.addVoting(example);
-		data.addVoting(example2);
-		data.addVoting(example3); 
-		
 		
 		visual.setData(data);
 		tabViewTable = visual.visualize();
@@ -175,11 +129,12 @@ public class VotingGUI {
 		commentpanel.add(commButtonsPanel);
 		
 		headerpanel.add(votingHeader);
-		headerpanel.add(uploadpanel);
+		headerpanel.addStyleName("votingHeader");
 		
 		contentpanel.add(optionpanel);
 		contentpanel.add(tabPanel);
 		contentpanel.add(commentpanel);
+		contentpanel.addStyleName("votingContent");
 		
 		final Button shareViz = new Button("Share visualisation");
 		final Button saveViz = new Button("Download visualisation");
@@ -214,6 +169,25 @@ public class VotingGUI {
 
 		});
 		
+		//create a FormPanel 
+		final FormPanel form = new FormPanel();
+		headerpanel.add(form);
+		//create a file upload widget
+		final FileUpload fileUpload = new FileUpload();
+		fileUpload.setName("votingFileupload");
+			
+		//create labels
+		final Label selectLabel = new Label("Select a file:");
+		//create upload button
+		final Button uploadButton = new Button("Upload File");
+		//pass action to the form to point to service handling file 
+		//receiving operation.
+		form.setAction(GWT.getModuleBaseURL()+"fileupload");
+		// set form to use the POST method, and multipart MIME encoding.
+		form.setEncoding(FormPanel.ENCODING_MULTIPART);
+		form.setMethod(FormPanel.METHOD_POST);
+
+		
 		uploadButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -233,41 +207,49 @@ public class VotingGUI {
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 				// When the form submission is successfully completed, this 
 				//event is fired. Assuming the service returned a response 
-				//of type text/html, we can get the result text here 
-				Window.alert(event.getResults());				
+				//of type text/html, we can get the result text here
+				Window.alert("Data successfully updated! Please reload the page.");
 			}
 		});
 		
-		// Add form to the root panel     
-		form.add(mainpanel);
+		form.add(uploadpanel);
 
-		RootPanel.get("voting").add(form);
+		//add a label
+		uploadpanel.add(selectLabel);
+		//add fileUpload widget
+		uploadpanel.add(fileUpload);
+		//add a button to upload the file
+		uploadpanel.add(uploadButton);
+
+		RootPanel.get("voting").add(mainpanel);
 	}
 	
 	//method is called after every change in the option panel to update the view
 	void updateGUI(){
-		Data yearFilteredData = new Data();
-		Data selectFilteredData = new Data();
-		Data filteredData = new Data();
+		ArrayList<Voting> filteredData = new ArrayList<Voting>();
+		ArrayList<Voting> yearFilteredData = new ArrayList<Voting>();
+		ArrayList<Voting> selectFilteredData = new ArrayList<Voting>();
 		int selctedYearIndex = yearList.getSelectedIndex();
 		int selectedYear = 0;
 		int numOFVotes = data.getSize();
+		
+		System.out.println("updateGUI called with data #"+numOFVotes);
 		
 		if(selctedYearIndex != 0){
 			selectedYear = Integer.parseInt(yearList.getItemText(selctedYearIndex));
 			//filtering for year
 			for(int i = 0; i < numOFVotes; i++){
 				if(selectedYear == data.getVotings().get(i).getYear()){
-					yearFilteredData.addVoting(data.getVotings().get(i));
+					yearFilteredData.add(data.getVotings().get(i));
 				}
 			}
 		}
 		else{
 			for(int i = 0; i < numOFVotes; i++){
-				yearFilteredData.addVoting(data.getVotings().get(i));
+				yearFilteredData.add(data.getVotings().get(i));
 			}
 		}
-		filteredData.copyData(yearFilteredData);
+		filteredData = yearFilteredData;
 		
 		
 		boolean[] selectedArray = new boolean[votingList.getItemCount()];
@@ -284,8 +266,8 @@ public class VotingGUI {
 		int itemInListCount = votingList.getItemCount();
 		votingList.clear();
 		votingList.addItem("all votings");
-		for (int i = 0; i < yearFilteredData.getSize(); i++){
-			String currentVoteName = yearFilteredData.getVoting(i).getTitle();
+		for (int i = 0; i < yearFilteredData.size(); i++){
+			String currentVoteName = yearFilteredData.get(i).getTitle();
 			votingList.addItem(currentVoteName);
 		}
 		for(int j = 0; j < itemInListCount; j++){
@@ -295,39 +277,39 @@ public class VotingGUI {
 		}
 		
 		//filter selected votes
-		
 		if(selectedArray[0] == false){
-			for(int i = 1; i <= yearFilteredData.getSize(); i++){
+			for(int i = 1; i <= yearFilteredData.size(); i++){
 				if(selectedArray[i] == true){
-					selectFilteredData.addVoting(yearFilteredData.getVotings().get(i-1));
+					selectFilteredData.add(yearFilteredData.get(i-1));
 				}
 			}
 		}
 		else{
-			selectFilteredData.copyData(yearFilteredData);
+			selectFilteredData = yearFilteredData;
 		}
-		filteredData.copyData(selectFilteredData);
 		
+		filteredData = selectFilteredData;
 		
 		//actually updating the table view
 		updateTable(tabViewTable, filteredData);
 		
 	}
 	
-	void updateTable(FlexTable table, Data currData) {
+	void updateTable(FlexTable table, ArrayList<Voting> currData) {
+		System.out.println("Updating table with #" + currData.size());
 		table.removeAllRows();
 		table.setText(0, 0, "Year");
 		table.setText(0, 1, "Name");
 		table.setText(0, 2, "Yes-Votes(%)");
 		table.setText(0, 3, "No-Votes(%)");
-		for(int i = 1 ; i <= currData.getSize(); i++){
-			int date = currData.getVoting(i-1).getYear();
+		for(int i = 1 ; i <= currData.size(); i++){
+			int date = currData.get(i-1).getYear();
 			String year = String.valueOf(date);
 			table.setText(i, 0, year);
-			table.setText(i, 1, currData.getVoting(i -1).getTitle());
-			String yesVotes = String.valueOf(currData.getVoting(i -1).getYesVotes());
+			table.setText(i, 1, currData.get(i -1).getTitle());
+			String yesVotes = String.valueOf(currData.get(i -1).getYesVotes());
 			table.setText(i, 2, yesVotes);
-			String noVotes = String.valueOf(currData.getVoting(i -1).getNoVotes());
+			String noVotes = String.valueOf(currData.get(i -1).getNoVotes());
 			table.setText(i, 3, noVotes);
 		}
 		

@@ -7,7 +7,7 @@ import org.junit.Test;
 public class GUIBuildTest {
 
 	@Test
-	public void test() {
+	public void testBuildGui() {
 		VotingGUI gui = new VotingGUI();
 		gui.buildGUI();
 	}

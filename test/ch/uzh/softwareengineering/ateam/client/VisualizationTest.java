@@ -1,13 +1,23 @@
 package ch.uzh.softwareengineering.ateam.client;
 
 import static org.junit.Assert.*;
+
+import org.junit.Before;
 import org.junit.Test;
+
 import com.google.gwt.user.client.ui.FlexTable;
 
 public class VisualizationTest {
 
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+	}
+	
 	@Test
-	public void test() {
+	public void testVisualisation() {
 		Voting voting1 = new Voting();
 		Voting voting2 = new Voting();
 		Voting voting3 = new Voting();
@@ -15,9 +25,6 @@ public class VisualizationTest {
 		voting1.setTitle("Abzockerinitiative");
 		
 		Data data = new Data();
-		data.addVoting(voting1);
-		data.addVoting(voting2);
-		data.addVoting(voting3);
 		
 		Visualisation visual = new Visualisation();
 		visual.setData(data);

@@ -39,7 +39,7 @@ public class VotingServiceImpl extends RemoteServiceServlet implements VotingSer
 					voting.setYear(((Long)result.getProperty("year")).intValue());
 					voting.setYesVotes((Double) result.getProperty("yes"));
 					voting.setNoVotes((Double) result.getProperty("no"));
-					voting.setCanton("National");
+					voting.setCantonName("National");
 					ArrayList<Voting> cantons = getCantons(voting.getTitle(), pq);
 					voting.setCantons(cantons);
 					votings.add(voting);
@@ -64,7 +64,7 @@ public class VotingServiceImpl extends RemoteServiceServlet implements VotingSer
 					voting.setYear(((Long)result.getProperty("year")).intValue());
 					voting.setYesVotes((Double) result.getProperty("yes"));
 					voting.setNoVotes((Double) result.getProperty("no"));
-					voting.setCanton((String) result.getProperty("canton"));
+					voting.setCantonName((String) result.getProperty("canton"));
 					voting.setCantons(null);
 					cantons.add(voting);
 				}

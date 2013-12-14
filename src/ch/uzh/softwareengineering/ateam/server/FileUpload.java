@@ -101,7 +101,7 @@ public class FileUpload extends HttpServlet {
 									Voting v = new Voting();
 									if(data[0].equals("National")){
 										v.setNational(true);
-										v.setCanton("National");
+										v.setCantonName("National");
 										v.setTitle(data[1]);
 										v.setYear(Integer.parseInt(data[2]));
 										v.setYesVotes(Double.parseDouble(data[3]));
@@ -111,12 +111,12 @@ public class FileUpload extends HttpServlet {
 									}
 									else{
 										v.setNational(false);
-										v.setCanton(data[0]);
+										v.setCantonName(data[0]);
 										v.setTitle(data[1]);
 										v.setYear(Integer.parseInt(data[2]));
 										v.setYesVotes(Double.parseDouble(data[3]));
 										v.setNoVotes(Double.parseDouble(data[4]));
-										System.out.println(i++ + ": Added voting entry " + v.getCanton() + " " + v.getTitle() + "...");
+										System.out.println(i++ + ": Added voting entry " + v.getCantonName() + " " + v.getTitle() + "...");
 										this.addVoting(v);
 									}
 								}
@@ -171,7 +171,7 @@ public class FileUpload extends HttpServlet {
 			vote.setProperty("year", voting.getYear());
 			vote.setProperty("yes", voting.getYesVotes());
 			vote.setProperty("no", voting.getNoVotes());
-			vote.setProperty("canton", voting.getCanton());
+			vote.setProperty("canton", voting.getCantonName());
 			datastore.put(vote);
 		} catch (Exception e) {
 			throw new InvocationException(

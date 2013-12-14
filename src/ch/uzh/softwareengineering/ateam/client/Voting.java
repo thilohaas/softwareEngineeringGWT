@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class Voting implements IsSerializable {
 	private int id;
 	private boolean national;
-	private String canton;
+	private String cantonName;
 	private String title;
 	private int year;
 	private String type;
@@ -157,7 +157,7 @@ public class Voting implements IsSerializable {
 		}
 		else{
 			for(int i = 0; i < cantons.size(); i++){
-				System.out.println(cantons.get(i).getCanton());
+				System.out.println(cantons.get(i).getCantonName());
 			}
 		}
 	}
@@ -166,11 +166,11 @@ public class Voting implements IsSerializable {
 		System.out.println("title");
 	}
 
-	public String getCanton() {
-		return canton;
+	public String getCantonName() {
+		return cantonName;
 	}
 
-	public void setCanton(String canton) {
-		this.canton = canton;
+	public void setCantonName(String cantonName) {
+		this.cantonName = cantonName;
 	}
 }

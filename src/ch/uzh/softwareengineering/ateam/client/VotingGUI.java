@@ -40,6 +40,7 @@ public class VotingGUI {
 	void buildGUI(ArrayList<Voting> dataset) {
 		System.out.println("buildGUI got dataset #" + dataset.size());
 		data = new Data(dataset);
+		data.sortVotes(0, data.getSize() -1);
 		// Create a panel to hold all of the form widgets.
 		
 		final VerticalPanel mainpanel = new VerticalPanel();

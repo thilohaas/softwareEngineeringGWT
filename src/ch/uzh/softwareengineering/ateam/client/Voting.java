@@ -132,8 +132,10 @@ public class Voting implements IsSerializable {
 		this.cantons = cantons;
 	}
 	
-	
-	
+	/**
+	 * 
+	 * @param canton the canton to add
+	 */
 	public void addCanton(Voting canton){
 		cantons.add(canton);
 	}
@@ -151,31 +153,29 @@ public class Voting implements IsSerializable {
 		this.national = national;
 	}
 	
-	public void printCantons(){
-		System.out.println("Ich bin die " + getTitle() + " und printe jetzt die Kantone...");
-		if(cantons == null){
-			System.out.println("no cantons");
-		}
-		else{
-			for(int i = 0; i < cantons.size(); i++){
-				System.out.println(cantons.get(i).getCantonName());
-			}
-		}
-	}
-	
-	public void print(){
-		System.out.println("title");
-	}
-
+	/**
+	 * @return the name of the canton ("National" if this is a national result)
+	 */
 	public String getCantonName() {
 		return cantonName;
 	}
-
+	
+	/**
+	 * 
+	 * @param cantonName the name to set
+	 */
 	public void setCantonName(String cantonName) {
 		this.cantonName = cantonName;
 	}
 	
-	public void sortCantons(int left, int right){
+	/**
+	 *  Helper method for the quicksort algorithm. If you want to sort the cantons, call this method!
+	 * 
+	 * @param left left index of the container
+	 * @param right right index of the container
+	 * 
+	 */
+	public void sortCantons(int left, int right){  
 		if (left >= right){
 			return;
 		}
@@ -186,6 +186,14 @@ public class Voting implements IsSerializable {
 		sortCantons(j + 1, right); 
 	}
 	
+	/**
+	 * Quicksort Algorithm
+	 * 
+	 * @param left lower range
+	 * @param right upper range
+	 * @return int j. All values with index k > j are equal or greater than the value at index j and
+	 * all values with index k < j are smaller than the value at index j. 
+	 */
 	public int partition(int left, int right){
 		int j = left;
 		int k = right -1;
@@ -196,7 +204,7 @@ public class Voting implements IsSerializable {
 				j++;
 			}
 		
-			while (cantons.get(k).getCantonName().compareTo(pivot) >= 0 && k > left){
+			while (cantons.get(k).getCantonName().compareTo(pivot) > 0 && k > left){
 				k--;
 			}
 		

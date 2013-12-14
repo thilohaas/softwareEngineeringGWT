@@ -9,7 +9,7 @@ public class UpdateGUITest {
 	@Test
 	public void test() {
 		VotingGUI appGUI = new VotingGUI();
-		appGUI.buildGUI();
+		appGUI.buildGUI(null);
 		appGUI.updateGUI();	
 	}
 

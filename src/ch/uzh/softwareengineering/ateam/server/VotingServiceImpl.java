@@ -32,14 +32,18 @@ public class VotingServiceImpl extends RemoteServiceServlet implements VotingSer
 			PreparedQuery pq = datastore.prepare(q);
 
 			for (Entity result : pq.asIterable()) {
-				Voting voting = new Voting();
-
-				voting.setTitle((String) result.getProperty("title"));
-				voting.setYear(((Long)result.getProperty("year")).intValue());
-				voting.setYesVotes((Double) result.getProperty("yes"));
-				voting.setNoVotes((Double) result.getProperty("no"));
-				
-				votings.add(voting);
+				//System.out.println("Got vote: " + result.getProperty("canton") + " " + result.getProperty("title"));
+				if(((String) result.getProperty("canton")).equals("National")){
+					Voting voting = new Voting();
+					voting.setTitle((String) result.getProperty("title"));
+					voting.setYear(((Long)result.getProperty("year")).intValue());
+					voting.setYesVotes((Double) result.getProperty("yes"));
+					voting.setNoVotes((Double) result.getProperty("no"));
+					voting.setCanton("National");
+					ArrayList<Voting> cantons = getCantons(voting.getTitle(), pq);
+					voting.setCantons(cantons);
+					votings.add(voting);
+				}
 			}
 		} catch (Exception e) {
 			throw new InvocationException("Exeption connecting to the database",e);
@@ -48,5 +52,24 @@ public class VotingServiceImpl extends RemoteServiceServlet implements VotingSer
 		System.out.println("got " + votings.size());
 
 		return votings;
+	}
+	
+	public ArrayList<Voting> getCantons(String vote, PreparedQuery pq){
+		ArrayList<Voting> cantons = new ArrayList<Voting>();
+		for	(Entity result : pq.asIterable()){
+			if(((String) result.getProperty("title")).equals(vote)){
+				if(!(((String) result.getProperty("canton")).equals("National"))){
+					Voting voting = new Voting();
+					voting.setTitle((String) result.getProperty("title"));
+					voting.setYear(((Long)result.getProperty("year")).intValue());
+					voting.setYesVotes((Double) result.getProperty("yes"));
+					voting.setNoVotes((Double) result.getProperty("no"));
+					voting.setCanton((String) result.getProperty("canton"));
+					voting.setCantons(null);
+					cantons.add(voting);
+				}
+			}
+		}
+		return cantons;
 	}
 }

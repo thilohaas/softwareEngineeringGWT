@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 
@@ -51,7 +52,6 @@ public class FileUpload extends HttpServlet {
 		}
 		
 		System.out.println("deleted all existing voting entries..");
-
 		try {
 			// Create a factory for disk-based file items
 			FileItemFactory factory = new DiskFileItemFactory(10240, new File(""));
@@ -62,7 +62,6 @@ public class FileUpload extends HttpServlet {
 			List items = upload.parseRequest(request);
 			// Process the uploaded items
 			Iterator iter = items.iterator();
-
 			while (iter.hasNext()) {
 				System.out.println("found a file.. lets check it..");
 				FileItem item = (FileItem) iter.next();
@@ -89,24 +88,37 @@ public class FileUpload extends HttpServlet {
 							try {
 
 								br = new BufferedReader(streamReader);
+								int i = 1;
 								while ((line = br.readLine()) != null) {
 									// use comma as separator
 									String[] data = line.split(cvsSplitBy);
 
-									if(data.length != 4) {
-										System.out.println("Skipping line because length is not 4 its " + data.length + "! line: " + line);
+									if(data.length != 5) {
+										System.out.println("Skipping line because length is not 5 its " + data.length + "! line: " + line);
 										continue;
 									}
-
-									Voting v = new Voting();
-									v.setTitle(data[0]);
-									v.setYear(Integer.parseInt(data[1]));
-									v.setYesVotes(Double.parseDouble(data[2]));
-									v.setNoVotes(Double.parseDouble(data[3]));
 									
-									System.out.println("Added voting entry " + v.getTitle() + "...");
-
-									this.addVoting(v);
+									Voting v = new Voting();
+									if(data[0].equals("National")){
+										v.setNational(true);
+										v.setCanton("National");
+										v.setTitle(data[1]);
+										v.setYear(Integer.parseInt(data[2]));
+										v.setYesVotes(Double.parseDouble(data[3]));
+										v.setNoVotes(Double.parseDouble(data[4]));
+										System.out.println(i++ + ": Added voting entry " + v.getTitle() + "...");
+										this.addVoting(v);
+									}
+									else{
+										v.setNational(false);
+										v.setCanton(data[0]);
+										v.setTitle(data[1]);
+										v.setYear(Integer.parseInt(data[2]));
+										v.setYesVotes(Double.parseDouble(data[3]));
+										v.setNoVotes(Double.parseDouble(data[4]));
+										System.out.println(i++ + ": Added voting entry " + v.getCanton() + " " + v.getTitle() + "...");
+										this.addVoting(v);
+									}
 								}
 
 							} catch (FileNotFoundException e) {
@@ -159,10 +171,37 @@ public class FileUpload extends HttpServlet {
 			vote.setProperty("year", voting.getYear());
 			vote.setProperty("yes", voting.getYesVotes());
 			vote.setProperty("no", voting.getNoVotes());
+			vote.setProperty("canton", voting.getCanton());
 			datastore.put(vote);
 		} catch (Exception e) {
 			throw new InvocationException(
 					"Exeption connecting to the database", e);
 		}
 	}
+	
+	public void getCantons(BufferedReader br, String line, String cvsSplitBy, Voting vote){
+		int i = 0;
+		try{
+			while((line = br.readLine()) != null && i < 26){
+				Voting v = new Voting();
+				String[] data = line.split(cvsSplitBy);
+				
+				if(data.length != 5) {
+					System.out.println("Skipping line because length is not 5 its " + data.length + "! line: " + line);
+					continue;
+				}
+				System.out.println("Reading vote " + data[1]);
+				v.setNational(false);
+				v.setTitle(data[1]);
+				v.setYear(Integer.parseInt(data[2]));
+				v.setYesVotes(Double.parseDouble(data[3]));
+				v.setNoVotes(Double.parseDouble(data[4]));
+				System.out.println("oke");
+				vote.addCanton(v);
+				i++;
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}	
 }

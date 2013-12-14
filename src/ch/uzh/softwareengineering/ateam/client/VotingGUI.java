@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
@@ -31,6 +32,7 @@ public class VotingGUI {
 	final Visualisation visual = new Visualisation();
 	FlexTable tabViewTable = new FlexTable();
 	Data data;
+	private boolean zoomOption = false; 
 	
 	final ListBox yearList = new ListBox();
 	final ListBox votingList = new ListBox(true);
@@ -155,7 +157,7 @@ public class VotingGUI {
 			public void onChange(ChangeEvent event) {
 
 				votingList.setSelectedIndex(0);
-				updateGUI();
+				updateGUI(zoomOption);
 			}
 
 		});
@@ -164,10 +166,30 @@ public class VotingGUI {
 		{
 			@Override
 			public void onChange(ChangeEvent event) {
-				updateGUI();
+				updateGUI(zoomOption);
 			}
 
 		});
+		
+		nationalViewRB.addClickHandler(new ClickHandler() 
+		{
+			@Override
+			public void onClick(ClickEvent event){
+				zoomOption = false;
+				updateGUI(zoomOption);
+			}
+		});
+		
+		
+		kantonalViewRB.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event){
+				zoomOption = true;
+				updateGUI(zoomOption);
+			}
+		});
+		
+		
 		
 		//create a FormPanel 
 		final FormPanel form = new FormPanel();
@@ -225,10 +247,11 @@ public class VotingGUI {
 	}
 	
 	//method is called after every change in the option panel to update the view
-	void updateGUI(){
+	void updateGUI(boolean isCantonalView){
 		ArrayList<Voting> filteredData = new ArrayList<Voting>();
 		ArrayList<Voting> yearFilteredData = new ArrayList<Voting>();
 		ArrayList<Voting> selectFilteredData = new ArrayList<Voting>();
+		
 		int selctedYearIndex = yearList.getSelectedIndex();
 		int selectedYear = 0;
 		int numOFVotes = data.getSize();
@@ -291,7 +314,12 @@ public class VotingGUI {
 		filteredData = selectFilteredData;
 		
 		//actually updating the table view
-		updateTable(tabViewTable, filteredData);
+		if(isCantonalView){
+			updateTableCantonal(tabViewTable, filteredData);
+		}
+		else{
+			updateTable(tabViewTable, filteredData);
+		}
 		
 	}
 	
@@ -312,7 +340,45 @@ public class VotingGUI {
 			String noVotes = String.valueOf(currData.get(i -1).getNoVotes());
 			table.setText(i, 3, noVotes);
 		}
-		
 	}
 	
+	void updateTableCantonal(FlexTable table, ArrayList<Voting> currData){
+		System.out.println("Updating table with #" + currData.size() + " and all Cantons");
+		table.removeAllRows();
+		table.setText(0, 0, "Year");
+		table.setText(0, 1, "Name");
+		table.setText(0, 2, "Yes-Votes(%)");
+		table.setText(0, 3, "No-Votes(%)");
+		
+		int size = 0;
+		for(int i = 0; i < currData.size(); i++){
+			size += currData.get(i).getCantons().size();
+			size++;
+		}
+		
+		for(int i = 1; i <= size; i++){
+			for(int j = 0; j < currData.size(); j++){
+				int date = currData.get(j).getYear();
+				String year = String.valueOf(date);
+				table.setText(i, 0, year);
+				table.setText(i, 1, currData.get(j).getTitle());
+				String yesVotes = String.valueOf(currData.get(j).getYesVotes());
+				table.setText(i, 2, yesVotes);
+				String noVotes = String.valueOf(currData.get(j).getNoVotes());
+				table.setText(i, 3, noVotes);
+				i++;
+				for(int k = 0; k < currData.get(j).getCantons().size(); k++){
+					int date_ = currData.get(j).getCantons().get(k).getYear();
+					String year_ = String.valueOf(date_);
+					table.setText(i, 0, year_);
+					table.setText(i, 1, currData.get(j).getCantons().get(k).getCantonName());
+					String yesVotes_ = String.valueOf(currData.get(j).getCantons().get(k).getYesVotes());
+					table.setText(i, 2, yesVotes_);
+					String noVotes_ = String.valueOf(currData.get(j).getCantons().get(k).getNoVotes());
+					table.setText(i, 3, noVotes_);
+					i++;
+				}
+			}
+		}
+	}
 }

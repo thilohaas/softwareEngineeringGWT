@@ -42,6 +42,7 @@ public class VotingServiceImpl extends RemoteServiceServlet implements VotingSer
 					voting.setCantonName("National");
 					ArrayList<Voting> cantons = getCantons(voting.getTitle(), pq);
 					voting.setCantons(cantons);
+					voting.sortCantons(0, voting.getCantons().size() - 1);
 					votings.add(voting);
 				}
 			}

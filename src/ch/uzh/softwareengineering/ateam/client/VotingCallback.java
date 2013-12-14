@@ -27,7 +27,7 @@ public class VotingCallback implements AsyncCallback {
 //		}
 
 		this.appGUI.buildGUI(votings);
-		this.appGUI.updateGUI();
+		this.appGUI.updateGUI(false);
 	}
 	
 	public static native void alert(String msg) /*-{

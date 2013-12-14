@@ -2,6 +2,7 @@ package ch.uzh.softwareengineering.ateam.client;
 
 import java.util.Date;
 import java.util.ArrayList;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Voting implements IsSerializable {
@@ -172,5 +173,46 @@ public class Voting implements IsSerializable {
 
 	public void setCantonName(String cantonName) {
 		this.cantonName = cantonName;
+	}
+	
+	public void sortCantons(int left, int right){
+		if (left >= right){
+			return;
+		}
+		
+		int j = partition(left, right);
+		
+		sortCantons(left, j -1);
+		sortCantons(j + 1, right); 
+	}
+	
+	public int partition(int left, int right){
+		int j = left;
+		int k = right -1;
+		String pivot = cantons.get(right).getCantonName();
+	
+		while (j < k){
+			while (cantons.get(j).getCantonName().compareTo(pivot) <= 0 && j < right){
+				j++;
+			}
+		
+			while (cantons.get(k).getCantonName().compareTo(pivot) >= 0 && k > left){
+				k--;
+			}
+		
+			if (j < k){
+				Voting temp = cantons.get(j);
+				cantons.set(j, cantons.get(k));
+				cantons.set(k, temp);
+			}
+		}
+	
+		if (cantons.get(j).getCantonName().compareTo(pivot) > 0){
+			Voting temp = cantons.get(j);
+			cantons.set(j, cantons.get(right));
+			cantons.set(right, temp);
+		}
+		
+		return j; 
 	}
 }

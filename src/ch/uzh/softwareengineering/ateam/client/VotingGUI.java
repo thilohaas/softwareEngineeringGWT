@@ -10,7 +10,10 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -26,11 +29,20 @@ import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.visualization.client.AbstractDataTable;
+import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
+import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.visualizations.GeoMap;
+import com.google.gwt.visualization.client.visualizations.GeoMap.Options;
+import com.google.gwt.visualization.client.visualizations.PieChart;
+
 
 public class VotingGUI {
 	final Visualisation visual = new Visualisation();
 	FlexTable tabViewTable = new FlexTable();
 	Data data;
+	int mode = 0;
 	
 	final ListBox yearList = new ListBox();
 	final ListBox votingList = new ListBox(true);
@@ -53,7 +65,7 @@ public class VotingGUI {
 		uploadpanel.addStyleName("uploadPanel");
 		
 		final HorizontalPanel contentpanel = new HorizontalPanel();
-		contentpanel.setWidth("650px");
+		contentpanel.setWidth("750px");
 		contentpanel.setHeight("600px");
 		contentpanel.setSpacing(20);
 		
@@ -95,11 +107,21 @@ public class VotingGUI {
 		optionpanel.add(votingList, "Voting:");
 		optionpanel.add(zoomPanel, "Zoomoption:");
 		
-		final Image mapImage = new Image();
-		mapImage.setUrl("http://upload.wikimedia.org/wikipedia/commons/c/ca/BlankMap-Switzerland.png");
-		mapImage.setWidth("650px");
-		mapImage.setHeight("412px");
-		
+		/*final Image mapImage = new Image();
+		mapImage.setUrl("http://img4.picload.org/image/opwcgwo/karte800.png");
+		mapImage.setWidth("800px");*/
+		final VerticalPanel mappanel = new VerticalPanel();
+			
+		Runnable onLoadCallback = new Runnable() {
+		      public void run() {
+		 
+		        // Create a pie chart visualization.
+		        GeoMap map = new GeoMap(createTable(), createOptions());
+		        
+		        mappanel.add(map);
+		        
+		      }
+		    };
 		
 		visual.setData(data);
 		tabViewTable = visual.visualize();
@@ -112,10 +134,11 @@ public class VotingGUI {
 		}
 
 		final TabPanel tabPanel = new TabPanel();
-		tabPanel.setWidth("650px");
+		tabPanel.setWidth("800px");
 		tabPanel.add(tabViewTable, "Tabular View");
-		tabPanel.add(mapImage, "Graphical View");
+		tabPanel.add(mappanel, "Graphical View");
 		tabPanel.selectTab(0);
+		mode = tabPanel.getTabBar().getSelectedTab();
 		
 		final Label commLabel = new Label("Add Comments or Images:");
 		final VerticalPanel commButtonsPanel = new VerticalPanel();
@@ -133,7 +156,7 @@ public class VotingGUI {
 		
 		contentpanel.add(optionpanel);
 		contentpanel.add(tabPanel);
-		contentpanel.add(commentpanel);
+		//contentpanel.add(commentpanel);
 		contentpanel.addStyleName("votingContent");
 		
 		final Button shareViz = new Button("Share visualisation");
@@ -167,6 +190,14 @@ public class VotingGUI {
 				updateGUI();
 			}
 
+		});
+		
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				updateGUI();
+			}
 		});
 		
 		//create a FormPanel 
@@ -222,6 +253,8 @@ public class VotingGUI {
 		uploadpanel.add(uploadButton);
 
 		RootPanel.get("voting").add(mainpanel);
+		VisualizationUtils.loadVisualizationApi(onLoadCallback, GeoMap.PACKAGE);
+
 	}
 	
 	//method is called after every change in the option panel to update the view
@@ -315,4 +348,28 @@ public class VotingGUI {
 		
 	}
 	
+	private Options createOptions() {
+	    Options options = Options.create();
+	    options.setWidth(800);
+	    options.setHeight(530);
+	    options.setShowLegend(true);
+	    options.setShowZoomOut(true);
+	    options.setRegion("CH");
+	    options.setDataMode(GeoMap.DataMode.REGIONS);
+	    return options;
+	  }
+	private AbstractDataTable createTable() {
+	    DataTable data = DataTable.create();
+	    data.addColumn(ColumnType.STRING, "Canton");
+	    data.addColumn(ColumnType.NUMBER, "%Yes");
+	    data.addRows(3);
+	    data.setValue(0, 0, "CH-AG");
+	    data.setValue(0, 1, 40);
+	    data.setValue(1, 0, "CH-FR");
+	    data.setValue(1, 1, 56);
+	    data.setValue(2, 0, "CH-BS");
+	    data.setValue(2, 1, 70);
+	    
+	    return data;
+	  }
 }

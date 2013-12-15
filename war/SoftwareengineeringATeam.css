@@ -39,4 +39,8 @@ h1 {
   font-style: oblique;
   margin-bottom: 20px;
 }
+.mapImage{
+ 	background-image: url("http://img4.picload.org/image/opwcgwo/karte800.png");
+	background-repeat: no-repeat;
+}
 

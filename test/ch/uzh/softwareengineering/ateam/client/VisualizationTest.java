@@ -24,7 +24,7 @@ public class VisualizationTest {
 		
 		voting1.setTitle("Abzockerinitiative");
 		
-		Data data = new Data();
+		Data data = new Data(null);
 		
 		Visualisation visual = new Visualisation();
 		visual.setData(data);

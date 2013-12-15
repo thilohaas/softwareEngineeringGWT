@@ -35,15 +35,19 @@ public class Data implements VotingService{
 		}
 	}
 	
-	public void quickSort(int left, int right){
+	public void addData(Voting vote){
+		dataset.add(vote);
+	}
+	
+	public void sortVotes(int left, int right){
 		if (left >= right){
 			return;
 		}
 		
 		int j = partition(left, right);
 		
-		quickSort(left, j -1);
-		quickSort(j + 1, right); 
+		sortVotes(left, j -1);
+		sortVotes(j + 1, right); 
 	}
 	
 	public int partition(int left, int right){
@@ -52,11 +56,11 @@ public class Data implements VotingService{
 		int pivot = dataset.get(right).getYear();
 	
 		while (j < k){
-			while (dataset.get(j).getYear() <= pivot && j < right){
+			while (dataset.get(j).getYear() >= pivot && j < right){
 				j++;
 			}
 		
-			while (dataset.get(k).getYear() >= pivot && k > left){
+			while (dataset.get(k).getYear() < pivot && k > left){
 				k--;
 			}
 		
@@ -67,7 +71,7 @@ public class Data implements VotingService{
 			}
 		}
 	
-		if (dataset.get(j).getYear() > pivot){
+		if (dataset.get(j).getYear() < pivot){
 			Voting temp = dataset.get(j);
 			dataset.set(j, dataset.get(right));
 			dataset.set(right, temp);

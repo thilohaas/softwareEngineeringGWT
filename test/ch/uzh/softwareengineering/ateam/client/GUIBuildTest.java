@@ -9,7 +9,7 @@ public class GUIBuildTest {
 	@Test
 	public void testBuildGui() {
 		VotingGUI gui = new VotingGUI();
-		gui.buildGUI();
+		gui.buildGUI(null);
 	}
 
 }

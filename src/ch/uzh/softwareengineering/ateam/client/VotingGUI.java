@@ -47,6 +47,10 @@ public class VotingGUI {
 	final ListBox yearList = new ListBox();
 	final ListBox votingList = new ListBox(true);
 	
+	final TabPanel tabPanel = new TabPanel();
+	final VerticalPanel mappanel = new VerticalPanel();
+	Label voteLable = new Label();
+	
 	void buildGUI(ArrayList<Voting> dataset) {
 		System.out.println("buildGUI got dataset #" + dataset.size());
 		data = new Data(dataset);
@@ -98,32 +102,16 @@ public class VotingGUI {
 		final VerticalPanel zoomPanel = new VerticalPanel();
 		final Label zoomLabel = new Label("Select a View:");
 		final RadioButton nationalViewRB = new RadioButton("zommGroup", "National View");
-		final RadioButton kantonalViewRB = new RadioButton("zommGroup", "Kantonal View");
+		final RadioButton kantonalViewRB = new RadioButton("zommGroup", "Cantonal View");
 		nationalViewRB.setChecked(true);
 		zoomPanel.add(zoomLabel);
 		zoomPanel.add(nationalViewRB);
 		zoomPanel.add(kantonalViewRB);
 		
 		optionpanel.add(yearList, "Year:");
-		optionpanel.add(votingList, "Voting:");
-		optionpanel.add(zoomPanel, "Zoomoption:");
-		
-		/*final Image mapImage = new Image();
-		mapImage.setUrl("http://img4.picload.org/image/opwcgwo/karte800.png");
-		mapImage.setWidth("800px");*/
-		final VerticalPanel mappanel = new VerticalPanel();
+		optionpanel.add(votingList, "Vote:");
+		optionpanel.add(zoomPanel, "View option:");
 			
-		Runnable onLoadCallback = new Runnable() {
-		      public void run() {
-		 
-		        // Create a pie chart visualization.
-		        GeoMap map = new GeoMap(createTable(), createOptions());
-		        
-		        mappanel.add(map);
-		        
-		      }
-		    };
-		
 		visual.setData(data);
 		tabViewTable = visual.visualize();
 		
@@ -134,7 +122,7 @@ public class VotingGUI {
 			votingList.addItem(currentVoteName);
 		}
 
-		final TabPanel tabPanel = new TabPanel();
+				
 		tabPanel.setWidth("800px");
 		tabPanel.add(tabViewTable, "Tabular View");
 		tabPanel.add(mappanel, "Graphical View");
@@ -167,7 +155,7 @@ public class VotingGUI {
 		
 		mainpanel.add(headerpanel);
 		mainpanel.add(contentpanel);
-		mainpanel.add(sharepanel);
+		//mainpanel.add(sharepanel);
 		
 
 		votingList.setItemSelected(0, true);
@@ -274,7 +262,7 @@ public class VotingGUI {
 		uploadpanel.add(uploadButton);
 
 		RootPanel.get("voting").add(mainpanel);
-		VisualizationUtils.loadVisualizationApi(onLoadCallback, GeoMap.PACKAGE);
+		
 
 	}
 	
@@ -284,77 +272,151 @@ public class VotingGUI {
 		ArrayList<Voting> yearFilteredData = new ArrayList<Voting>();
 		ArrayList<Voting> selectFilteredData = new ArrayList<Voting>();
 		
+		
 		int selctedYearIndex = yearList.getSelectedIndex();
 		int selectedYear = 0;
 		int numOFVotes = data.getSize();
 		
+		//checking whether table or map is selected
+		mode = tabPanel.getTabBar().getSelectedTab();
+		
 		System.out.println("updateGUI called with data #"+numOFVotes);
 		
-		if(selctedYearIndex != 0){
-			selectedYear = Integer.parseInt(yearList.getItemText(selctedYearIndex));
-			//filtering for year
-			for(int i = 0; i < numOFVotes; i++){
-				if(selectedYear == data.getVotings().get(i).getYear()){
+		if(mode == 0){ //updating data for table view
+			if(selctedYearIndex != 0){
+				selectedYear = Integer.parseInt(yearList.getItemText(selctedYearIndex));
+				//filtering for year
+				for(int i = 0; i < numOFVotes; i++){
+					if(selectedYear == data.getVotings().get(i).getYear()){
+						yearFilteredData.add(data.getVotings().get(i));
+					}
+				}
+			}
+			else{
+				for(int i = 0; i < numOFVotes; i++){
 					yearFilteredData.add(data.getVotings().get(i));
 				}
 			}
-		}
-		else{
-			for(int i = 0; i < numOFVotes; i++){
-				yearFilteredData.add(data.getVotings().get(i));
-			}
-		}
-		filteredData = yearFilteredData;
-		
-		
-		boolean[] selectedArray = new boolean[votingList.getItemCount()];
-		//checking which votings are selected
-		for(int i = 0; i < votingList.getItemCount(); i++){
-			if(votingList.isItemSelected(i)){
-				selectedArray[i] = true;
-			}
-			else{
-				selectedArray[i] = false;
-			}
-		}
-		//refresh voting dropdownlist
-		int itemInListCount = votingList.getItemCount();
-		votingList.clear();
-		votingList.addItem("all votings");
-		for (int i = 0; i < yearFilteredData.size(); i++){
-			String currentVoteName = yearFilteredData.get(i).getTitle();
-			votingList.addItem(currentVoteName);
-		}
-		for(int j = 0; j < itemInListCount; j++){
-			if(selectedArray[j] == true){
-				votingList.setItemSelected(j, true);
-			}
-		}
-		
-		//filter selected votes
-		if(selectedArray[0] == false){
-			for(int i = 1; i <= yearFilteredData.size(); i++){
-				if(selectedArray[i] == true){
-					selectFilteredData.add(yearFilteredData.get(i-1));
+			filteredData = yearFilteredData;
+			
+			
+			boolean[] selectedArray = new boolean[votingList.getItemCount()];
+			//checking which votings are selected
+			for(int i = 0; i < votingList.getItemCount(); i++){
+				if(votingList.isItemSelected(i)){
+					selectedArray[i] = true;
+				}
+				else{
+					selectedArray[i] = false;
 				}
 			}
-		}
-		else{
-			selectFilteredData = yearFilteredData;
+			//refresh voting dropdownlist
+			int itemInListCount = votingList.getItemCount();
+			votingList.clear();
+			votingList.addItem("all votings");
+			for (int i = 0; i < yearFilteredData.size(); i++){
+				String currentVoteName = yearFilteredData.get(i).getTitle();
+				votingList.addItem(currentVoteName);
+			}
+			for(int j = 0; j < itemInListCount; j++){
+				if(selectedArray[j] == true){
+					votingList.setItemSelected(j, true);
+				}
+			}
+			
+			//filter selected votes
+			if(selectedArray[0] == false){
+				for(int i = 1; i <= yearFilteredData.size(); i++){
+					if(selectedArray[i] == true){
+						selectFilteredData.add(yearFilteredData.get(i-1));
+					}
+				}
+			}
+			else{
+				selectFilteredData = yearFilteredData;
+			}
+			
+			filteredData = selectFilteredData;
+			
+		} else { //updating data for map
+			if(selctedYearIndex != 0){
+				selectedYear = Integer.parseInt(yearList.getItemText(selctedYearIndex));
+				//filtering for year
+				for(int i = 0; i < numOFVotes; i++){
+					if(selectedYear == data.getVotings().get(i).getYear()){
+						yearFilteredData.add(data.getVotings().get(i));
+					}
+				}
+			}
+			else{
+				for(int i = 0; i < numOFVotes; i++){
+					yearFilteredData.add(data.getVotings().get(i));
+				}
+			}
+			filteredData = yearFilteredData;
+			
+			int selectedVote = 0;
+			if(votingList.getSelectedIndex() == 0){
+				selectedVote = 1;
+			} else {
+				selectedVote = votingList.getSelectedIndex();
+			}
+			
+			//refresh voting dropdownlist
+			votingList.clear();
+			votingList.addItem("all votings");
+			for (int i = 0; i < yearFilteredData.size(); i++){
+				String currentVoteName = yearFilteredData.get(i).getTitle();
+				votingList.addItem(currentVoteName);
+			}
+			votingList.setSelectedIndex(selectedVote);
+			
+			selectFilteredData.add(yearFilteredData.get(selectedVote-1));
+			//filter selected votes
+						
+			filteredData = selectFilteredData;
 		}
 		
-		filteredData = selectFilteredData;
+		final ArrayList<Voting> finalData = filteredData;
 		
 		//actually updating the table view
 		if(isCantonalView){
-			updateTableCantonal(tabViewTable, filteredData);
+			if(mode == 0){
+				updateTableCantonal(tabViewTable, filteredData);
+			} else {
+				updateMap(finalData);
+			}
+			
 		}
 		else{
-			updateTable(tabViewTable, filteredData);
+			if (mode == 0){
+				updateTable(tabViewTable, filteredData);
+			} else {
+				updateMap(finalData);
+			}
+			
 		}
 		
 	}
 	
+	private void updateMap(final ArrayList<Voting> filteredData) {
+		Runnable onLoadCallback = new Runnable() {
+		      public void run() {
+		    	  if(mappanel.getWidgetCount() >= 1){
+		    		  	mappanel.remove(1);
+		    		  	mappanel.remove(0);
+		    	  }
+		        // Create a pie chart visualization.
+		        GeoMap map = new GeoMap(createTable(filteredData), createOptions());
+		        voteLable.setText(votingList.getItemText(votingList.getSelectedIndex()));
+		        mappanel.add(voteLable);
+		        mappanel.add(map);
+		        
+		      }
+		    };
+		    VisualizationUtils.loadVisualizationApi(onLoadCallback, GeoMap.PACKAGE);
+	}
+
 	void updateTable(FlexTable table, ArrayList<Voting> currData) {
 		System.out.println("Updating table with #" + currData.size());
 		table.removeAllRows();
@@ -379,23 +441,33 @@ public class VotingGUI {
 	    options.setWidth(800);
 	    options.setHeight(530);
 	    options.setShowLegend(true);
-	    options.setShowZoomOut(true);
-	    options.setRegion("CH");
+	    if(zoomOption){
+	    	options.setRegion("CH");
+	    }else {
+	    	options.setRegion("155");
+	    }
 	    options.setDataMode(GeoMap.DataMode.REGIONS);
 	    return options;
 	  }
-	private AbstractDataTable createTable() {
+	
+	private AbstractDataTable createTable(ArrayList<Voting> voteData) {
 	    DataTable data = DataTable.create();
-	    data.addColumn(ColumnType.STRING, "Canton");
+	    data.addColumn(ColumnType.STRING, "Region");
 	    data.addColumn(ColumnType.NUMBER, "%Yes");
-	    data.addRows(3);
-	    data.setValue(0, 0, "CH-AG");
-	    data.setValue(0, 1, 40);
-	    data.setValue(1, 0, "CH-FR");
-	    data.setValue(1, 1, 56);
-	    data.setValue(2, 0, "CH-BS");
-	    data.setValue(2, 1, 70);
-	    
+	     
+	    if(zoomOption == false){
+	    	data.addRows(1);
+	    	data.setValue(0, 0, "Switzerland");
+		    data.setValue(0, 1, voteData.get(0).getYesVotes());
+	    } else {
+	    	data.addRows(voteData.get(0).getCantons().size());
+	    	for (int i = 0; i < voteData.get(0).getCantons().size(); i++){
+	    		String canton =  "CH-" + voteData.get(0).getCantons().get(i).getCantonName();
+		    	data.setValue(i, 0, canton);
+		    	data.setValue(i, 1, voteData.get(0).getCantons().get(i).getYesVotes());
+		    }
+	    }
+	
 	    return data;
 	  }
 
